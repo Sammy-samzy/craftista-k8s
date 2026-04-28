@@ -1,0 +1,22 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster
+spec:
+  instances: 3
+  storage:
+    size: 1Gi
+  backup:
+    retentionPolicy: "2d"
+    barmanObjectStore:
+      destinationPath: s3://pg-backups/
+      endpointURL: http://10.96.221.77:9000
+      s3Credentials:
+        accessKeyId:
+          name: minio-creds
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: minio-creds
+          key: ACCESS_SECRET_KEY
+      wal:
+        compression: gzip

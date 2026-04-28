@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: users-api-migration-job-init
+spec:
+  template:
+    spec:
+      initContainers:
+        - name: check-db-ready
+          image: postgres:15
+          command: ['sh', '-c', 
+            'until pg_isready -h postgres-restore-rw -p 5432; 
+            do echo "Waiting for database..."; sleep 2; done; 
+            echo "Database is ready!"']
+      containers:
+        - name: migration
+          image: sammysamzy/node-postgres-api:v2
+          env:
+            - name: RUN_MIGRATIONS
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: api-db-secret
+      restartPolicy: OnFailure
+  backoffLimit: 4

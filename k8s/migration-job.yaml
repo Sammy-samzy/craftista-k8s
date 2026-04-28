@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: api-migration-job
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+        - name: migration
+          image: sammysamzy/node-postgres-api:v2
+          env:
+            - name: RUN_MIGRATIONS
+              value: "true"
+            - name: MIGRATION_ONLY
+              value: "true"
+          envFrom:
+            - secretRef:
+                name: api-db-secret
+      restartPolicy: OnFailure
+  

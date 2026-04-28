@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: api
+          image: sammysamzy/node-postgres-api:v2
+          ports:
+            - containerPort: 4000
+          envFrom:
+            - secretRef:
+                name: api-db-secret

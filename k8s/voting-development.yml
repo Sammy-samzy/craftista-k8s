@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: voting
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: voting
+  template:
+    metadata:
+      labels:
+        app: voting
+    spec:
+      containers:
+        - name: voting
+          image: sammysamzy/craftista-voting:v2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "postgres-restore-rw"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "app"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: voting-db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: voting-db-secret
+                  key: DB_PASSWORD

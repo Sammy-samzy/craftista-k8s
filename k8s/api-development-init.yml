@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-init
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: api-init
+  template:
+    metadata:
+      labels:
+        app: api-init
+    spec:
+      serviceAccountName: migration-waiter
+      initContainers:
+        - name: wait-for-migration
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for migration job to complete..."
+              kubectl wait --for=condition=complete \
+              job/api-migration-job \
+              --timeout=120s
+              echo "Migration job completed! Starting app..."
+      containers:
+        - name: users-api
+          image: sammysamzy/node-postgres-api:v2
+          ports:
+            - containerPort: 4000
+          envFrom:
+            - secretRef:
+                name: api-db-secret
