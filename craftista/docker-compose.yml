@@ -1,0 +1,44 @@
+services:
+  catalogue:
+    build:
+      context: ./catalogue
+    container_name: catalogue
+    expose:
+      - "5000" 
+    networks:
+      - craftista-network
+
+  voting:
+    build:
+      context: ./voting
+    container_name: voting
+    expose:
+      - "8080"
+    networks:
+      - craftista-network
+
+  recommendation:
+    build:
+      context: ./recommendation
+    container_name: recommendation
+    expose:
+      - "8080"
+    networks:
+      - craftista-network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - catalogue
+      - voting
+      - recommendation
+    networks:
+      - craftista-network
+
+networks:
+  craftista-network:
+    driver: bridge
