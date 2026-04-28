@@ -1,12 +1,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: craftista-voting
+  name: craftista
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://github.com/Sammy-samzy/craftista
+    repoURL: https://github.com/Sammy-samzy/craftista-k8s
     targetRevision: HEAD
     path: k8s
   destination:
